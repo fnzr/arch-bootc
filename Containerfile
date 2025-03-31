@@ -30,7 +30,10 @@ RUN pacstrap -c -P /mnt \
     grub \
     dracut \
     ostree \
-    podman
+    podman \
+    vim \
+    sudo \
+    base-devel
 
 # Turn the pacstrapped rootfs into a container image.
 FROM scratch
@@ -64,6 +67,11 @@ RUN mkdir /sysroot /efi && \
     ln -s var/roothome /root && \
     ln -s var/usrlocal /usr/local && \
     ln -s var/srv /srv
+
+RUN useradd archlinux --create-home --user-group
+RUN echo "root:ostree" | chpasswd
+RUN echo "archlinux:ostree" | chpasswd
+RUN echo "archlinux ALL=(ALL) ALL" >> /etc/sudoers.d/10-archlinux
 
 # Necessary labels
 LABEL containers.bootc 1
